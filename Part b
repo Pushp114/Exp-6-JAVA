@@ -1,0 +1,37 @@
+// Example for the CREATE (Insert) operation
+public void createProduct(int id, String name, double price) {
+    String sql = "INSERT INTO product (id, name, price) VALUES (?, ?, ?)";
+    try (Connection conn = getConnection(); // Assume a utility method for connection
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        
+        ps.setInt(1, id);
+        ps.setString(2, name);
+        ps.setDouble(3, price);
+        
+        int rowsAffected = ps.executeUpdate();
+        System.out.println(rowsAffected + " product record(s) created.");
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+// Example for the READ (Select) operation
+public void readProduct(int id) {
+    String sql = "SELECT * FROM product WHERE id = ?";
+    try (Connection conn = getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        
+        ps.setInt(1, id);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                System.out.printf("Found Product: ID=%d, Name=%s, Price=%.2f%n", 
+                                  rs.getInt("id"), rs.getString("name"), rs.getDouble("price"));
+            } else {
+                System.out.println("Product not found.");
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
